@@ -16,7 +16,7 @@ app = FastAPI(
 )
 
 # CORS設定
-origins = [
+allowed_origins = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:3000",
@@ -25,14 +25,31 @@ origins = [
 
 # 本番環境でのフロントエンドURL追加
 if frontend_url := os.getenv("FRONTEND_URL"):
-    origins.append(frontend_url)
+    allowed_origins.append(frontend_url)
+
+# 開発環境では追加のローカルアドレスも許可
+if os.getenv("ENVIRONMENT") != "production":
+    allowed_origins.extend([
+        "http://192.168.3.152:5173",  # ネットワーク内アドレス
+        "http://10.0.0.0/8",          # プライベートネットワーク
+        "http://172.16.0.0/12",
+        "http://192.168.0.0/16",
+    ])
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=[
+        "Accept",
+        "Accept-Language",
+        "Content-Language",
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With",
+    ],
+    max_age=3600,  # プリフライトリクエストのキャッシュ時間
 )
 
 # Trusted Host ミドルウェア（本番環境用）
@@ -48,8 +65,17 @@ async def root():
     """ルートエンドポイント"""
     return {
         "message": "Line Tracer Control API",
+        "description": "ライントレースカー制御システムのバックエンドAPI",
         "version": "1.0.0",
-        "docs": "/docs"
+        "docs": "/docs",
+        "status": "running",
+        "endpoints": {
+            "health": "/api/health",
+            "command": "/api/command",
+            "logs": "/api/logs",
+            "stats": "/api/stats",
+            "documentation": "/docs"
+        }
     }
 
 if __name__ == "__main__":
