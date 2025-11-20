@@ -47,6 +47,7 @@ python main.py
 
 - **[セットアップガイド](docs/setup.md)** - ローカル開発環境の構築方法
 - **[API仕様](docs/api.md)** - エンドポイントとデータモデルの詳細
+- **[テストサーバー](docs/testing.md)** - テスト用サーバーの説明と実行方法
 - **[デプロイガイド](docs/deployment.md)** - Renderへのデプロイ手順
 - **[開発ガイド](docs/development.md)** - 音声認識モデルの統合とカスタマイズ方法
 - **[Pico W 統合ガイド](docs/pico_integration.md)** - Raspberry Pi Pico W との連携方法
@@ -109,7 +110,7 @@ Renderへのデプロイは非常に簡単です：
 
 ## 📁 プロジェクト構成
 
-```
+```bash
 server/
 ├── main.py                    # エントリーポイント（src/main.py のラッパー）
 ├── requirements.txt           # Python依存関係
